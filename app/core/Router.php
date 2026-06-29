@@ -20,11 +20,6 @@ class Router
     {
         $method = $request->getMethod();
         $uri = $request->getUri();
-         echo "DEBUG URI: " . $uri . "<br>";
-
-    var_dump($this->routes);
-
-    exit;
 
         if ($uri === '') {
             $uri = '/';
