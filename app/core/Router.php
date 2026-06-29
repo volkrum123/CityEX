@@ -20,9 +20,11 @@ class Router
     {
         $method = $request->getMethod();
         $uri = $request->getUri();
+         echo "DEBUG URI: " . $uri . "<br>";
 
-        // Remove the project folder from the URI
-        $uri = str_replace('/php/CityEX/public', '', $uri);
+    var_dump($this->routes);
+
+    exit;
 
         if ($uri === '') {
             $uri = '/';

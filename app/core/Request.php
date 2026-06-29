@@ -6,22 +6,38 @@ namespace App\Core;
 
 class Request
 {
-    /**
-     * Returns the HTTP request method.
-     */
+    private string $basePath;
+
+    public function __construct(array $config)
+    {
+        $this->basePath = $config['base_path'] ?? '';
+    }
+
     public function getMethod(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    /**
-     * Returns the requested URI.
-     */
     public function getUri(): string
-    {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+{
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
 
-        return $uri ?: '/';
+    // Remove project base path
+    $base = '/php/CityEX/public';
+
+    if (str_starts_with($uri, $base)) {
+        $uri = substr($uri, strlen($base));
     }
+
+    // Normalize index.php cases
+    $uri = str_replace('/index.php', '', $uri);
+
+    // Ensure root path is "/"
+    if ($uri === '' || $uri === false) {
+        return '/';
+    }
+
+    return $uri;
+}
 }
 ?>
