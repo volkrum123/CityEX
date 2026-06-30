@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title><?= $title ?? 'City Explorer' ?></title>
 
-    <link rel="stylesheet" href="/php/CityEX/public/css/style.css">
+    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
 </head>
 <body>
 
     <header>
         <h2>City Explorer</h2>
+        <?php require __DIR__ . '/../partials/nav.php'; ?>
         <hr>
     </header>
 
