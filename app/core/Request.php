@@ -18,28 +18,24 @@ class Request
         return $_SERVER['REQUEST_METHOD'];
     }
 
-   public function getUri(): string
+public function getUri(): string
 {
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
 
-    // STEP 1: Remove project base path
+    // STEP 1: Define project base path
     $base = '/php/CityEX/public';
 
+    // STEP 2: Remove base path if present
     if (str_starts_with($uri, $base)) {
         $uri = substr($uri, strlen($base));
     }
 
-    // STEP 2: Remove index.php if present
-    $uri = str_replace('/index.php', '', $uri);
+    // STEP 3: Remove trailing slash
+    $uri = rtrim($uri, '/');
 
-    // STEP 3: Fix empty values
+    // STEP 4: Ensure root is "/"
     if ($uri === '' || $uri === false) {
         return '/';
-    }
-
-    // STEP 4: Ensure leading slash
-    if ($uri[0] !== '/') {
-        $uri = '/' . $uri;
     }
 
     return $uri;

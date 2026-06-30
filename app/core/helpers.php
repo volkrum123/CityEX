@@ -3,16 +3,34 @@
 declare(strict_types=1);
 
 /**
- * Generate a correct public URL for assets
+ * Get base URL dynamically (NO hardcoding)
  */
-function asset(string $path): string
+function base_url(): string
 {
-    return '/php/CityEX/public/' . ltrim($path, '/');
+    // Detect script path dynamically
+    $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+
+    return rtrim($scriptName, '/');
 }
+
 /**
- * Generate a clean internal URL
+ * Generate internal URL
  */
 function url(string $path = ''): string
 {
-    return '/php/CityEX/public/' . ltrim($path, '/');
+    $base = base_url();
+
+    if ($path === '') {
+        return $base ?: '/';
+    }
+
+    return $base . '/' . ltrim($path, '/');
+}
+
+/**
+ * Asset helper
+ */
+function asset(string $path): string
+{
+    return url($path);
 }
