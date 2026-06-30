@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core;
 
 class Application
 {
-     private Router $router;
+    private Router $router;
     private Request $request;
     private Response $response;
     private array $config;
@@ -22,13 +23,11 @@ class Application
 
     public function run(): void
     {
+        // Load routes and register them
         $routes = require __DIR__ . '/../../config/routes.php';
         $routes($this->router);
 
-        $this->router->dispatch(
-            $this->request,
-            $this->response
-        );
+        // IMPORTANT FIX: only pass request (not response)
+        $this->router->dispatch($this->request);
     }
 }
-?>

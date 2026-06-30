@@ -6,42 +6,68 @@ namespace App\Core;
 
 class Router
 {
-    /**
-     * @var array<string, array<string, array{controller: string, method: string}>>
-     */
-    private array $routes = [];
+    private array $routes;
 
-    public function get(string $path, string $controller, string $method): void
+    public function __construct()
     {
-        $this->routes['GET'][$path] = [
-            'controller' => $controller,
-            'method'     => $method
+        // IMPORTANT: initialize route buckets
+        $this->routes = [
+            'GET' => [],
+            'POST' => []
         ];
     }
 
-    public function post(string $path, string $controller, string $method): void
+    public function get(string $pattern, string $controller, string $action): void
     {
-        $this->routes['POST'][$path] = [
+        $this->routes['GET'][] = [
+            'pattern' => $pattern,
             'controller' => $controller,
-            'method'     => $method
+            'method' => $action
         ];
     }
 
-    public function dispatch(Request $request, Response $response): void
+    public function post(string $pattern, string $controller, string $action): void
     {
-        $method = $request->getMethod();
+        $this->routes['POST'][] = [
+            'pattern' => $pattern,
+            'controller' => $controller,
+            'method' => $action
+        ];
+    }
+
+    public function dispatch($request): void
+    {
         $uri = $request->getUri();
+        $method = $request->getMethod();
 
-        if (!isset($this->routes[$method][$uri])) {
-            http_response_code(404);
-            echo "404 - Page Not Found";
-            return;
+        foreach ($this->routes[$method] ?? [] as $route) {
+
+            $pattern = $route['pattern'];
+
+            // Convert /cities/{id} → regex
+            $regex = preg_replace(
+                '#\{[a-zA-Z0-9_]+\}#',
+                '([a-zA-Z0-9_-]+)',
+                $pattern
+            );
+
+            // Allow optional trailing slash + escape slashes safely
+            $regex = '#^' . str_replace('/', '\/', rtrim($regex, '/')) . '/?$#';
+
+            if (preg_match($regex, $uri, $matches)) {
+
+                array_shift($matches); // remove full match
+
+                $controller = new $route['controller']();
+                $methodName = $route['method'];
+
+                $controller->$methodName(...$matches);
+
+                return;
+            }
         }
 
-        $route = $this->routes[$method][$uri];
-
-        $controller = new $route['controller']();
-
-        $controller->{$route['method']}();
+        http_response_code(404);
+        echo "404 - Page Not Found";
     }
 }

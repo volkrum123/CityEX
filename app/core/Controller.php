@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-abstract class Controller
+class Controller
 {
-    protected View $view;
+    protected Response $response;
 
     public function __construct()
     {
-        $this->view = new View();
+        $this->response = new Response();
     }
 
-    protected function render(string $view, array $data = []): void
-    {
-        $this->view->render($view, $data);
-    }
+   protected function render(string $view, array $params = []): void
+{
+    // Extract variables for view
+    extract($params);
+
+    // Capture view output
+    ob_start();
+    require __DIR__ . '/../Views/' . $view . '.php';
+    $content = ob_get_clean();
+
+    // Load layout
+    require __DIR__ . '/../Views/layouts/main.php';
+}
 }

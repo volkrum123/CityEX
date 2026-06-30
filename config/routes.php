@@ -9,5 +9,6 @@ return function (Router $router): void {
     $router->get('/', HomeController::class, 'index');
     $router->get('/cities', HomeController::class, 'cities');
     $router->get('/about', HomeController::class, 'about');
+    $router->get('/cities/{id}', HomeController::class, 'showCity');
 };
 ?>

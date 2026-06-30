@@ -34,4 +34,11 @@ class HomeController extends Controller
             'message' => 'This is a learning project built in PHP MVC.'
         ]);
     }
+    public function showCity($id): void
+{
+    $this->render('city', [
+        'title' => 'City Details',
+        'cityId' => $id
+    ]);
+}
 }
