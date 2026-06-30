@@ -6,13 +6,24 @@ namespace App\Core;
 
 class Router
 {
+    /**
+     * @var array<string, array<string, array{controller: string, method: string}>>
+     */
     private array $routes = [];
 
-    public function get(string $uri, string $controller, string $method): void
+    public function get(string $path, string $controller, string $method): void
     {
-        $this->routes['GET'][$uri] = [
+        $this->routes['GET'][$path] = [
             'controller' => $controller,
-            'method' => $method
+            'method'     => $method
+        ];
+    }
+
+    public function post(string $path, string $controller, string $method): void
+    {
+        $this->routes['POST'][$path] = [
+            'controller' => $controller,
+            'method'     => $method
         ];
     }
 
@@ -21,25 +32,16 @@ class Router
         $method = $request->getMethod();
         $uri = $request->getUri();
 
-        if ($uri === '') {
-            $uri = '/';
-        }
-
         if (!isset($this->routes[$method][$uri])) {
-
-            $response->setStatusCode(404);
-            $response->send("<h1>404 - Page Not Found</h1>");
+            http_response_code(404);
+            echo "404 - Page Not Found";
             return;
         }
 
         $route = $this->routes[$method][$uri];
 
         $controller = new $route['controller']();
+
         $controller->{$route['method']}();
-
-        // $result = $controller->{$route['method']}();
-
-        // $response->send($result);
     }
 }
-?>

@@ -11,7 +11,7 @@ class HomeController extends Controller
     public function index(): void
     {
         $this->render('home', [
-            'title' => 'City Explorer',
+            'title'   => 'City Explorer',
             'heading' => 'Welcome to City Explorer!',
             'message' => 'Discover amazing cities around the world.'
         ]);
