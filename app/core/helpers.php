@@ -9,3 +9,10 @@ function asset(string $path): string
 {
     return '/php/CityEX/public/' . ltrim($path, '/');
 }
+/**
+ * Generate a clean internal URL
+ */
+function url(string $path = ''): string
+{
+    return '/php/CityEX/public/' . ltrim($path, '/');
+}
