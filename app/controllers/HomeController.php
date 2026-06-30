@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-class HomeController
+use App\Core\Controller;
+
+class HomeController extends Controller
 {
-    public function index(): string
+    public function index(): void
     {
-        return "<h1>Welcome to City Explorer!</h1>";
+        $this->render('home', [
+            'title' => 'City Explorer',
+            'heading' => 'Welcome to City Explorer!',
+            'message' => 'Discover amazing cities around the world.'
+        ]);
     }
 }
-?>

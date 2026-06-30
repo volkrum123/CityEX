@@ -35,10 +35,11 @@ class Router
         $route = $this->routes[$method][$uri];
 
         $controller = new $route['controller']();
+        $controller->{$route['method']}();
 
-        $result = $controller->{$route['method']}();
+        // $result = $controller->{$route['method']}();
 
-        $response->send($result);
+        // $response->send($result);
     }
 }
 ?>
