@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
+use App\Repositories\CityRepository;
 
 class HomeController extends Controller
 {
@@ -34,11 +36,26 @@ class HomeController extends Controller
             'message' => 'This is a learning project built in PHP MVC.'
         ]);
     }
+
     public function showCity($id): void
-{
-    $this->render('city', [
-        'title' => 'City Details',
-        'cityId' => $id
-    ]);
-}
+    {
+        $dbConfig = require __DIR__ . '/../../config/database.php';
+
+        $database = new Database($dbConfig);
+
+        $repository = new CityRepository($database->getConnection());
+
+        $city = $repository->find($id);
+
+        if (!$city) {
+            http_response_code(404);
+            echo "City not found";
+            return;
+        }
+
+        $this->render('city', [
+            'title' => $city['city'],
+            'city' => $city
+        ]);
+    }
 }

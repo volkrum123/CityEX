@@ -9,6 +9,7 @@ class Application
     private Router $router;
     private Request $request;
     private Response $response;
+    private Database $db;
     private array $config;
 
     public function __construct()
@@ -19,6 +20,9 @@ class Application
         $this->config = require __DIR__ . '/../../config/app.php';
 
         $this->request = new Request($this->config);
+
+        $dbConfig = require __DIR__ . '/../../config/database.php';
+        $this->db = new Database($dbConfig);
     }
 
     public function run(): void

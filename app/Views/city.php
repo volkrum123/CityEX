@@ -1,3 +1,3 @@
-<h1>City Details</h1>
+<h1><?= htmlspecialchars($city['city']) ?></h1>
 
-<p>City ID: <?= htmlspecialchars($cityId) ?></p>
+<p><?= htmlspecialchars($city['country']) ?></p>
