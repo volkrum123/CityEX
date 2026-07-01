@@ -33,24 +33,35 @@ class CityController extends Controller
     /**
      * Display all cities.
      */
-    public function index(Request $request): void
-{
-    $service = $this->getCityService();
+   public function index(Request $request): void
+    {
+        $service = $this->getCityService();
 
-    $search = trim((string) $request->getQuery('search', ''));
+        $search = trim((string)$request->getQuery('search', ''));
+        $page   = max(1, (int)$request->getQuery('page', 1));
+        $sort   = (string)$request->getQuery('sort', 'city_asc');
 
-    if ($search === '') {
-        $cities = $service->getAllCities();
-    } else {
-        $cities = $service->searchCities($search);
+        $perPage = 20;
+
+        if ($search !== '') {
+            $cities = $service->searchCitiesPaginated($search, $page, $perPage, $sort);
+            $total  = $service->countSearchResults($search);
+        } else {
+            $cities = $service->getCitiesPage($page, $perPage, $sort);
+            $total  = $service->getTotalCities();
+        }
+
+        $totalPages = (int) ceil($total / $perPage);
+
+        $this->render('cities', [
+            'title'       => 'Cities',
+            'cities'      => $cities,
+            'search'      => $search,
+            'sort'        => $sort,
+            'currentPage' => $page,
+            'totalPages'  => $totalPages
+        ]);
     }
-
-    $this->render('cities', [
-        'title'  => 'Cities',
-        'cities' => $cities,
-        'search' => $search
-    ]);
-}
 
     /**
      * Display a single city.
@@ -70,4 +81,5 @@ class CityController extends Controller
             'city'  => $city
         ]);
     }
+    
 }
