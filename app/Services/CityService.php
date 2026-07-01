@@ -25,7 +25,9 @@ class CityService
 
     public function getCityById(int $id): ?array
     {
-        return $this->repository->findById($id);
+        $city = $this->repository->findById($id);
+
+        return $city ?: null;
     }
 
     public function searchCities(string $search): array
@@ -60,4 +62,6 @@ class CityService
     {
         return $this->repository->countSearch($search);
     }
+
+    
 }

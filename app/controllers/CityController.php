@@ -66,13 +66,17 @@ class CityController extends Controller
     /**
      * Display a single city.
      */
-    public function show(Request $request, $id): void
+   public function show(Request $request, $id): void
     {
         $city = $this->getCityService()->getCityById((int)$id);
 
         if ($city === null) {
             http_response_code(404);
-            echo 'City not found';
+
+            $this->render('errors/404', [
+                'title' => 'Not Found'
+            ]);
+
             return;
         }
 
