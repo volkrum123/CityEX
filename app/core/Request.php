@@ -6,11 +6,11 @@ namespace App\Core;
 
 class Request
 {
-    private string $basePath;
+    private array $config;
 
     public function __construct(array $config)
     {
-        $this->basePath = $config['base_path'] ?? '';
+        $this->config = $config;
     }
 
     public function getMethod(): string
@@ -18,27 +18,35 @@ class Request
         return $_SERVER['REQUEST_METHOD'];
     }
 
-public function getUri(): string
-{
-    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+    public function getUri(): string
+    {
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    // STEP 1: Define project base path
-    $base = '/php/CityEX/public';
+        $basePath = rtrim($this->config['base_path'], '/');
 
-    // STEP 2: Remove base path if present
-    if (str_starts_with($uri, $base)) {
-        $uri = substr($uri, strlen($base));
+        if ($basePath !== '' && str_starts_with($uri, $basePath)) {
+            $uri = substr($uri, strlen($basePath));
+        }
+
+        $uri = '/' . trim($uri, '/');
+
+        return $uri === '//' ? '/' : $uri;
     }
 
-    // STEP 3: Remove trailing slash
-    $uri = rtrim($uri, '/');
-
-    // STEP 4: Ensure root is "/"
-    if ($uri === '' || $uri === false) {
-        return '/';
+    /**
+     * Returns a query string value.
+     * Example: /cities?search=Cape
+     */
+    public function getQuery(string $key, mixed $default = null): mixed
+    {
+        return $_GET[$key] ?? $default;
     }
 
-    return $uri;
+    /**
+     * Returns all query string parameters.
+     */
+    public function getQueryParams(): array
+    {
+        return $_GET;
+    }
 }
-}
-?>

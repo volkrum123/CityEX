@@ -61,6 +61,10 @@ class Router
                 $controller = new $route['controller']();
                 $methodName = $route['method'];
 
+                // Pass the Request object as the first argument,
+                // followed by any route parameters.
+                array_unshift($matches, $request);
+
                 $controller->$methodName(...$matches);
 
                 return;

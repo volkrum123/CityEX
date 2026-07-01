@@ -12,17 +12,56 @@ class CityRepository
     {
     }
 
-    public function find(int|string $id): array|false
+    /**
+     * Returns all cities.
+     */
+    public function findAll(): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM worldcities WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->pdo->query("
+            SELECT *
+            FROM worldcities
+            ORDER BY city ASC
+        ");
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function all(): array
+    /**
+     * Finds a city by its primary key.
+     */
+    public function findById(int $id): ?array
     {
-        $stmt = $this->pdo->query("SELECT * FROM cities");
+        $stmt = $this->pdo->prepare("
+            SELECT *
+            FROM worldcities
+            WHERE id = :id
+        ");
+
+        $stmt->execute([
+            'id' => $id
+        ]);
+
+        $city = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $city ?: null;
+    }
+
+    /**
+     * Search cities by name.
+     */
+    public function search(string $searchTerm): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT *
+            FROM worldcities
+            WHERE city ILIKE :search
+            ORDER BY city ASC
+        ");
+
+        $stmt->execute([
+            'search' => '%' . $searchTerm . '%'
+        ]);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
